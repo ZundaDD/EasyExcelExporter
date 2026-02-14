@@ -13,6 +13,8 @@ public class Program
         config_path = Path.Combine(AppContext.BaseDirectory, "config.json");
     }
 
+    private static List<string> enumCheck = ["int", "float", "bool", "string"];
+
     private static Config config = null!;
 
     private static void ReadConfig() => config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(config_path)) ?? new();
@@ -192,6 +194,8 @@ public partial class {className}
         foreach (var col in sources)
         {
             var colName = col.name;
+            if(!enumCheck.Contains( col.type) && !col.type.StartsWith("List<"))
+                sb.AppendLine("\t[JsonConverter(typeof(StringEnumConverter))]\n");
             sb.AppendLine($"\tpublic {col.type} {colName} {{ get; set; }}\n");
         }
 
