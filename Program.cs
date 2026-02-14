@@ -1,12 +1,6 @@
 ﻿using MiniExcelLibs;
 using Newtonsoft.Json;
-using System.Reflection;
-using System.Reflection.PortableExecutable;
-using System.Runtime.CompilerServices;
 using System.Text;
-using System.Text.Encodings.Web;
-using System.Text.Json;
-using System.Text.Unicode;
 
 namespace ExcelExporter;
 
@@ -15,10 +9,8 @@ public class Program
     private const string config_path = "config.json";
     private static Config config = null!;
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static void ReadConfig() => config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(config_path)) ?? new();
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static void SaveConfig() => File.WriteAllText(config_path, JsonConvert.SerializeObject(config, Formatting.Indented));
 
     private static void WriteC(string str, ConsoleColor color)
@@ -35,7 +27,7 @@ public class Program
         if (config == null) config = new();
 
         //扫描新xlsx
-        foreach(var file in Directory.GetFiles("."))
+        foreach (var file in Directory.GetFiles("."))
         {
             if (!file.EndsWith(".xlsx")) continue;
 
@@ -81,7 +73,7 @@ public class Program
         var exportPath = Path.Combine(config.ResourceExportPath, fileName);
         if (Path.Exists(exportPath)) Directory.Delete(exportPath, true);
         Directory.CreateDirectory(exportPath);
-        
+
         ExportExcelRows(filePath, exportPath);
     }
 
@@ -95,17 +87,12 @@ public class Program
         var fileName = Path.GetFileNameWithoutExtension(filePath);
 
         var runtimeCode = GenerateRuntimeCode(fileName, config.Namespace, structure, config.IncludeLists.ToList());
-        var runtimePath = Path.Combine(config.ScriptExportPath,$"{fileName}.cs");
+        var runtimePath = Path.Combine(config.ScriptExportPath, $"{fileName}.cs");
         SaveCode(runtimePath, runtimeCode);
     }
 
-    public static void ExportExcelRows(string path,string outputDir)
+    public static void ExportExcelRows(string path, string outputDir)
     {
-        var jsonOptions = new JsonSerializerOptions
-        {
-            WriteIndented = true,
-            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
-        };
         using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
         var rows = stream.Query(useHeaderRow: true);
@@ -138,7 +125,7 @@ public class Program
 
             if (rowDict.TryGetValue("Id", out object? ido) && ido is string id && !string.IsNullOrWhiteSpace(id))
             {
-                string json = System.Text.Json.JsonSerializer.Serialize(rowDict, jsonOptions);
+                string json = JsonConvert.SerializeObject(rowDict, Formatting.Indented);
                 string outputPath = Path.Combine(outputDir, $"{id}.json");
                 File.WriteAllText(outputPath, json);
 
