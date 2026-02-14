@@ -6,7 +6,13 @@ namespace ExcelExporter;
 
 public class Program
 {
-    private const string config_path = "config.json";
+    private static readonly string config_path;
+
+    static Program()
+    {
+        config_path = Path.Combine(AppContext.BaseDirectory, "config.json");
+    }
+
     private static Config config = null!;
 
     private static void ReadConfig() => config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(config_path)) ?? new();
