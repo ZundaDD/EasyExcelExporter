@@ -37,9 +37,10 @@ public class Program
         //扫描新xlsx
         foreach (var file in Directory.GetFiles("."))
         {
-            if (!file.EndsWith(".xlsx") || file.StartsWith("~$")) continue;
-
             var standard_key = Path.GetFileNameWithoutExtension(file);
+            if (!file.EndsWith(".xlsx") || standard_key.StartsWith("~$")) continue;
+
+            
 
             if (!config.Items.ContainsKey(standard_key))
             {
