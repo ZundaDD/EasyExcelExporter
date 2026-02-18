@@ -37,9 +37,10 @@ public class Program
         //扫描新xlsx
         foreach (var file in Directory.GetFiles("."))
         {
-            if (!file.EndsWith(".xlsx")) continue;
+            if (!file.EndsWith(".xlsx") || file.StartsWith("~$")) continue;
 
             var standard_key = Path.GetFileNameWithoutExtension(file);
+            WriteC($"New xlsx scanned: {standard_key}.xlsx", ConsoleColor.Green);
             if (!config.Items.ContainsKey(standard_key)) config.Items[standard_key] = new();
         }
 
@@ -47,9 +48,8 @@ public class Program
 
         if (args.Length < 1)
         {
-            WriteC("Need excel name argument\n", ConsoleColor.Red);
-            Console.Write("Press Enter to Exit:");
-            Console.ReadLine();
+            WriteC("Press Any Key to Exit", ConsoleColor.DarkBlue);
+            Console.ReadKey();
             return;
         }
 
@@ -69,8 +69,8 @@ public class Program
         WriteC("[Exporting jsons]\n", ConsoleColor.Blue);
         ExportResource(config.Items[args[0]], filePath);
 
-        Console.Write("Press Enter to Exit:");
-        Console.ReadLine();
+        WriteC("Press Any Key to Exit", ConsoleColor.DarkBlue);
+        Console.ReadKey();
     }
 
     public static void ExportResource(ConfigItem config, string filePath)
