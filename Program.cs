@@ -40,8 +40,12 @@ public class Program
             if (!file.EndsWith(".xlsx") || file.StartsWith("~$")) continue;
 
             var standard_key = Path.GetFileNameWithoutExtension(file);
-            WriteC($"New xlsx scanned: {standard_key}.xlsx", ConsoleColor.Green);
-            if (!config.Items.ContainsKey(standard_key)) config.Items[standard_key] = new();
+
+            if (!config.Items.ContainsKey(standard_key))
+            {
+                config.Items[standard_key] = new();
+                WriteC($"New xlsx scanned: {standard_key}.xlsx\n", ConsoleColor.Green);
+            }
         }
 
         SaveConfig();
